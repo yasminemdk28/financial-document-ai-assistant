@@ -1,0 +1,1 @@
+print("Financial Document AI Assistant")
