@@ -11,7 +11,10 @@ cle_api = os.getenv("GEMINI_API_KEY")
 if not cle_api:
     raise RuntimeError("La clé GEMINI_API_KEY est absente du fichier .env.")
 
-client = genai.Client(api_key=cle_api)
+client = genai.Client(
+    api_key=cle_api,
+    http_options={"timeout": 120000}
+)
 
 
 def poser_question(texte_document: str, question: str) -> str:
@@ -19,7 +22,7 @@ def poser_question(texte_document: str, question: str) -> str:
 Tu es un assistant spécialisé dans l'analyse de documents financiers.
 
 Réponds uniquement à partir du document fourni.
-Si la réponse n'apparaît pas dans le document, indique :
+Si la réponse n'apparaît pas dans le document, réponds exactement :
 "Cette information n'est pas présente dans le document."
 
 DOCUMENT :
@@ -29,9 +32,9 @@ QUESTION :
 {question}
 """
 
-    reponse = client.interactions.create(
-        model="gemini-3.8-flash",
-        input=prompt
+    reponse = client.models.generate_content(
+        model="gemini-3.5-flash-lite",
+        contents=prompt
     )
 
-    return reponse.output_text
+    return reponse.text
